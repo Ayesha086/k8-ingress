@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app1
+  # these labels are deployment resources
+  labels:
+    app: app1
+spec:
+# modify replicas according to your case
+  replicas: 2
+  selector:
+  # replicaset use these labels to find the pods for creating desired number of replicas
+    matchLabels:
+     app: app1
+  # pod template
+  template:
+    metadata:
+      labels:
+        app: app1
+       
+    spec:   
+     containers:
+     - name: app1
+       image: ayeshacs540/app1:1.0.0
+       ports:
+       - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec: 
+  type: LoadBalancer
+  selector: #labels arre used as selectors
+    app: app1
+  ports:
+  - protocol: TCP
+    port: 80 #service port
+    targetPort: 80 #container port number
+    nodePort: 30007
