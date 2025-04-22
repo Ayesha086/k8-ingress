@@ -28,7 +28,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx
+  name: app1
 spec: 
   type: LoadBalancer
   selector: #labels arre used as selectors
@@ -37,4 +37,27 @@ spec:
   - protocol: TCP
     port: 80 #service port
     targetPort: 80 #container port number
-    nodePort: 30007
+---
+ 
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip 
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:869935092837:certificate/73436fc3-0059-4c9d-b837-108611b725b9
+    alb.ingress.kubernetes.io/group.name: ayeshacs540
+spec:
+  ingressClassName: alb
+  rules:
+  - host: "app1.noor3.online"
+    http:
+      paths:
+      - pathType: Prefix
+        backend:
+          service:
+            name: app1
+            port:
+              number: 80
